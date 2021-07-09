@@ -19,7 +19,7 @@
          xhr.onloadend = async () => {
              if (xhr.status == 404) {
                   resultFree.push(result[i])
-                 
+                 console.clear()
                  console.log(resultFree[0])
              } 
          }
