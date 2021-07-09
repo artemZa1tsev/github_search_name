@@ -12,7 +12,7 @@
          result.push(x)
      }
      for (let i = 0; i <= result.length; i++) {
-         const requestURL = "https://api.github.com/users/" + result[i] + "?access_token=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"    
+         const requestURL = "https://api.github.com/users/" + result[i]    
          const xhr = new XMLHttpRequest()
          xhr.open('GET', requestURL, true)    
          xhr.responseType = 'json'
