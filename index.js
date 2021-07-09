@@ -1,3 +1,4 @@
+
  async function nameGen(str) {
      let result = [] 
      let resultFree = []  
@@ -12,18 +13,18 @@
          result.push(x)
      }
      for (let i = 0; i <= result.length; i++) {
-         const requestURL = "https://api.github.com/users/" + result[i]    
+         const requestURL = "https://api.github.com/users/" + result[i]
          const xhr = new XMLHttpRequest()
          xhr.open('GET', requestURL, true)    
          xhr.responseType = 'json'
          xhr.onloadend = async () => {
              if (xhr.status == 404) {
-                  resultFree.push(result[i])
-                 console.clear()
-                 console.log(resultFree[0])
+              resultFree.push(result[i])
+              console.clear()
+              console.log(resultFree.sort(function(arg1, arg2) { return arg1.length - arg2.length })[0])                                                     
              } 
          }
          xhr.send();
      }
  }
- console.log(nameGen("Nata Petr"))
+ console.log(nameGen("alexey vorobiev"))
