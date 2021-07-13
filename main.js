@@ -1,8 +1,6 @@
 import {
-    SaerchByName
-} from "./api.js";
+    GithubUserNameChecker
+} from "./githubApiAdapter.js";
 
 
 
-let saerchByName = new SaerchByName
-saerchByName.checkName("anton").then(console.log)
