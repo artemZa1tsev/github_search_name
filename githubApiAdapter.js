@@ -2,8 +2,8 @@ const URL = 'https://api.github.com/';
 
 export class GithubUserNameChecker {
     async isAvailable(username) {
-        const urls =  `${URL}users/${username}`
-        return fetch(urls)
+        const urlUser =  `${URL}users/${username}`
+        return fetch(urlUser)
             .then(res => res.ok)
     }
 }
