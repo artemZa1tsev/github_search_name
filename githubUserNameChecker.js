@@ -1,9 +1,16 @@
 import GithubApiAdapter from './githubApiAdapter.js';
 
-async function isAvailable(username) {
-  const apiStatus = await GithubApiAdapter.getGithubStatus(username);
-  if (apiStatus === 404) {
-    return true;
+class GithubUserNameChecker {
+  constructor(username, accessToken) {
+    this.username = username;
+    this.accessToken = accessToken;
   }
-  return false;
+
+  async isAvailable() {
+    const apiStatus = await GithubApiAdapter.getGithubStatus(this.username, this.accessToken);
+    if (apiStatus === 404) {
+      return true;
+    }
+    return false;
+  }
 }
