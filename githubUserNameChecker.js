@@ -1,75 +1,120 @@
 import GithubApiAdapter from './githubApiAdapter.js';
 
 class GithubUserNameChecker {
-  constructor(username, accessToken) {
-    this.username = username;
+  constructor(firstName, lastName, accessToken, favoriteNumber = '', numberOfdigits = 0) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.favoriteNumber = favoriteNumber;
+    this.numberOfdigits = numberOfdigits;
     this.accessToken = accessToken;
+    this.username = this.userNameGenerater(this.firstName, this.lastName);
+    this.usernameFavoriteNumber = this.appendNumber();
+    this.numberOfdigits = numberOfdigits;
+    this.symbolReplace = this.symbolReplace();
+    this.randomNumber = this.randomNumber();
   }
 
-  async isAvailable() {
-    const apiStatus = await GithubApiAdapter.getGithubStatus(this.username, this.accessToken);
+  async isAvailable(username) {
+    const apiStatus = await GithubApiAdapter.getGithubStatus(username, this.accessToken);
     if (apiStatus === 404) {
       return true;
     }
     return false;
   }
-}
 
-function nameGen2(firstName, lastName) {
-  const result = [];
-  const lastFirst = Math.max(firstName.length, lastName.length);
-  for (let i = 1; i <= lastFirst; i++) {
-    const x = firstName.slice(0, i) + lastName.slice(0, i);
-    const y = lastName.slice(0, i) + firstName.slice(0, i);
-    result.push(x) + result.push(y);
-  }
-  console.log(result);
-  return result;
-}
-
-function numGen(x) {
-  const result = [];
-  for (let n = 0; n <= 9; n++) {
-    for (let e = 0; e < x.length; e++) {
-      for (let i = 0; i < x[e].length; i++) {
-        const c = (function () {
-          const str = x[e].split('');
-          str[i] = n;
-          return str.join('');
-        }());
-        result.push(c);
+  async searchName() {
+    const name = this.username;
+    const nameAndfavoriteNumber = this.usernameFavoriteNumber;
+    const nameSymbolReplace = this.numberOfdigits;
+    if (this.favoriteNumber === '' && nameSymbolReplace === 0) {
+      for (let i = 1; i <= name.length; i += 1) {
+        if (await this.isAvailable(name[i])) {
+          if (name[i] === undefined) {
+            return 'No free name. Entered full name and surname? For a shorter username, add numeric parameters.';
+          }
+          return name[i];
+        }
+      }
+    }
+    if (this.favoriteNumber !== '' && nameSymbolReplace === 0) {
+      for (let i = 1; i <= nameAndfavoriteNumber.length; i += 1) {
+        if (await this.isAvailable(nameAndfavoriteNumber[i])) {
+          return nameAndfavoriteNumber[i];
+        }
+      }
+    }
+    if (this.favoriteNumber !== '' && nameSymbolReplace === 1) {
+      for (let i = 1; i <= this.symbolReplace.length; i += 1) {
+        if (await this.isAvailable(this.symbolReplace[i])) {
+          return this.symbolReplace[i];
+        }
+      }
+    }
+    if (this.favoriteNumber !== '' && nameSymbolReplace > 1) {
+      for (let i = 1; i <= this.symbolReplace.length; i += 1) {
+        if (await this.isAvailable(this.symbolReplace[i])) {
+          return this.symbolReplace[i];
+        } for (let e = 1; e <= this.symbolReplace.length; e += 1) {
+          const x = this.symbolReplace[e] + this.randomNumber;
+          if (await this.isAvailable(x)) {
+            return x;
+          }
+        }
       }
     }
   }
-  return result;
-}
 
-function number(array2, firstName, lastName, num) {
-  console.log(array2);
-  const lastFirst = Math.max(firstName.length, lastName.length);
-  const result = [];
-  for (let i = 1; i <= lastFirst; i++) {
-    const g = firstName.substr(0, i) + lastName.substr(0, i) + num;
-    const c = firstName.substr(0, i) + num + lastName.substr(0, i);
-    const d = num + firstName.substr(0, i) + lastName.substr(0, i);
-    const n = lastName.substr(0, i) + firstName.substr(0, i) + num;
-    const z = lastName.substr(0, i) + num + firstName.substr(0, i);
-    const b = num + lastName.substr(0, i) + firstName.substr(0, i);
-    `${result.push(g)} ${result.push(c)} ${result.push(d)} ${result.push(n)} ${result.push(z)} ${result.push(b)}`;
+  userNameGenerater() {
+    const result = [];
+    const maxLength = Math.max(this.firstName.length, this.lastName.length);
+    for (let i = 1; i <= maxLength; i += 1) {
+      const userName = result.push(this.firstName.slice(0, i) + this.lastName.slice(0, i));
+      const reversUsername = result.push(this.lastName.slice(0, i) + this.firstName.slice(0, i));
+    }
+    return result;
   }
-  return result;
-}
 
-console.log(number(numGen(nameGen2('artem', 'zaytsev')), 'artem', 'zaytsev', 2));
-
-function num(x, num) {
-  num = 4;
-  x = ['ar'];
-  const result = [];
-  for (let i = 1; i <= num; i++) {
-    result.push(Math.floor(Math.random() * 10));
+  symbolReplace() {
+    const name = this.username;
+    const result = [];
+    for (let n = 0; n <= 9; n += 1) {
+      for (let e = 0; e < name.length; e += 1) {
+        for (let i = 0; i < name[e].length; i += 1) {
+          const replace = (function substitution() {
+            const str = name[e].split('');
+            str[i] = n;
+            return str.join('');
+          }());
+          result.push(replace);
+        }
+      }
+    }
+    result.sort((a, b) => b.length - a.length);
+    return result.reverse();
   }
-  return result.join('');
-}
 
-console.log(num());
+  appendNumber() {
+    const { firstName } = this;
+    const { lastName } = this;
+    const num = this.favoriteNumber;
+    const maxLength = Math.max(firstName.length, lastName.length);
+    const result = [];
+    for (let i = 1; i <= maxLength; i += 1) {
+      for (let e = 0; e <= 2; e += 1) {
+        const g = [firstName.substr(0, i), lastName.substr(0, i)];
+        g.splice(e, 0, num);
+        result.push(g.join(''));
+      }
+    }
+    return result;
+  }
+
+  randomNumber() {
+    const num = this.numberOfdigits;
+    const result = [];
+    for (let i = 1; i <= num - 1; i += 1) {
+      result.push(Math.floor(Math.random() * 10));
+    }
+    return result.join('');
+  }
+}
