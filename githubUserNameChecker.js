@@ -22,46 +22,37 @@ class GithubUserNameChecker {
     return false;
   }
 
-  async searchName() {
+  async parameterCheck() {
     const name = this.username;
     const nameAndfavoriteNumber = this.usernameFavoriteNumber;
     const nameSymbolReplace = this.numberOfdigits;
+    if (this.favoriteNumber === '' && nameSymbolReplace === 1) {
+      return await this.searchName(this.symbolReplace);
+    }
+    if (this.favoriteNumber === '' && nameSymbolReplace > 1) {
+      return await this.searchName(this.symbolReplace);
+    }
     if (this.favoriteNumber === '' && nameSymbolReplace === 0) {
-      for (let i = 1; i <= name.length; i += 1) {
-        if (await this.isAvailable(name[i])) {
-          if (name[i] === undefined) {
-            return 'No free name. Entered full name and surname? For a shorter username, add numeric parameters.';
-          }
-          return name[i];
-        }
-      }
+      return await this.searchName(name);
     }
     if (this.favoriteNumber !== '' && nameSymbolReplace === 0) {
-      for (let i = 1; i <= nameAndfavoriteNumber.length; i += 1) {
-        if (await this.isAvailable(nameAndfavoriteNumber[i])) {
-          return nameAndfavoriteNumber[i];
-        }
-      }
+      return await this.searchName(nameAndfavoriteNumber);
     }
-    if (this.favoriteNumber !== '' && nameSymbolReplace === 1) {
-      for (let i = 1; i <= this.symbolReplace.length; i += 1) {
-        if (await this.isAvailable(this.symbolReplace[i])) {
-          return this.symbolReplace[i];
-        }
-      }
+    if (this.favoriteNumber !== '' && nameSymbolReplace >= 1) {
+      return await this.searchName(nameAndfavoriteNumber);
     }
-    if (this.favoriteNumber !== '' && nameSymbolReplace > 1) {
-      for (let i = 1; i <= this.symbolReplace.length; i += 1) {
-        if (await this.isAvailable(this.symbolReplace[i])) {
-          return this.symbolReplace[i];
-        } for (let e = 1; e <= this.symbolReplace.length; e += 1) {
-          const x = this.symbolReplace[e] + this.randomNumber;
-          if (await this.isAvailable(x)) {
-            return x;
-          }
-        }
+  }
+
+  async searchName(username) {
+    let i = 0;
+    while (i <= username.length - 1) {
+      console.log(i);
+      if (await this.isAvailable(username[i] + this.randomNumber)) {
+        return username[i] + this.randomNumber;
       }
+      i += 1;
     }
+    return 'No free name. Entered full name and surname? For a shorter username, add numeric parameters.';
   }
 
   userNameGenerater() {
