@@ -1,2 +1,23 @@
 # Github API find available username.
-Calling the isAvailable function with the username parameter returns true or false depending on the availability of the name.
+Сlass call with parameters:
+
+const githubUserNameChecker = new GithubUserNameChecker('jack', 'daniels', 'token', 23, 0);
+
+Method call:
+
+githubUserNameChecker.parameterCheck()
+
+
+
+Firstname - 'Jack'.
+Lastname - 'Daniels'.
+Token - personal token Github.
+23 - favorite number.
+0 - number of additional digits.
+
+Shortest username with parameters:
+'' - favorite number
+1 - number of additional digits.
+
+
+

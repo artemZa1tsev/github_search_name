@@ -7,9 +7,9 @@ class GithubUserNameChecker {
     this.favoriteNumber = favoriteNumber;
     this.numberOfdigits = numberOfdigits;
     this.accessToken = accessToken;
+    this.numberOfdigits = numberOfdigits;
     this.username = this.userNameGenerater(this.firstName, this.lastName);
     this.usernameFavoriteNumber = this.appendNumber();
-    this.numberOfdigits = numberOfdigits;
     this.symbolReplace = this.symbolReplace();
     this.randomNumber = this.randomNumber();
   }
@@ -23,30 +23,24 @@ class GithubUserNameChecker {
   }
 
   async parameterCheck() {
-    const name = this.username;
-    const nameAndfavoriteNumber = this.usernameFavoriteNumber;
-    const nameSymbolReplace = this.numberOfdigits;
-    if (this.favoriteNumber === '' && nameSymbolReplace === 1) {
-      return await this.searchName(this.symbolReplace);
+    if (this.favoriteNumber === '' && this.numberOfdigits === 0) {
+      return this.searchName(this.username);
     }
-    if (this.favoriteNumber === '' && nameSymbolReplace > 1) {
-      return await this.searchName(this.symbolReplace);
+    if (this.favoriteNumber === '' && this.numberOfdigits >= 1) {
+      return this.searchName(this.symbolReplace);
     }
-    if (this.favoriteNumber === '' && nameSymbolReplace === 0) {
-      return await this.searchName(name);
+    if (this.favoriteNumber !== '' && this.numberOfdigits === 0) {
+      return this.searchName(this.usernameFavoriteNumber);
     }
-    if (this.favoriteNumber !== '' && nameSymbolReplace === 0) {
-      return await this.searchName(nameAndfavoriteNumber);
-    }
-    if (this.favoriteNumber !== '' && nameSymbolReplace >= 1) {
-      return await this.searchName(nameAndfavoriteNumber);
+    if (this.favoriteNumber !== '' && this.numberOfdigits >= 1) {
+      return this.searchName(this.usernameFavoriteNumber);
     }
   }
 
   async searchName(username) {
     let i = 0;
     while (i <= username.length - 1) {
-      console.log(i);
+      // eslint-disable-next-line no-await-in-loop
       if (await this.isAvailable(username[i] + this.randomNumber)) {
         return username[i] + this.randomNumber;
       }
@@ -59,8 +53,8 @@ class GithubUserNameChecker {
     const result = [];
     const maxLength = Math.max(this.firstName.length, this.lastName.length);
     for (let i = 1; i <= maxLength; i += 1) {
-      const userName = result.push(this.firstName.slice(0, i) + this.lastName.slice(0, i));
-      const reversUsername = result.push(this.lastName.slice(0, i) + this.firstName.slice(0, i));
+      result.push(this.firstName.slice(0, i) + this.lastName.slice(0, i));
+      result.push(this.lastName.slice(0, i) + this.firstName.slice(0, i));
     }
     return result;
   }
@@ -92,18 +86,22 @@ class GithubUserNameChecker {
     const result = [];
     for (let i = 1; i <= maxLength; i += 1) {
       for (let e = 0; e <= 2; e += 1) {
-        const g = [firstName.substr(0, i), lastName.substr(0, i)];
-        g.splice(e, 0, num);
-        result.push(g.join(''));
+        const addNum = [firstName.substr(0, i), lastName.substr(0, i)];
+        addNum.splice(e, 0, num);
+        result.push(addNum.join(''));
       }
     }
     return result;
   }
 
   randomNumber() {
-    const num = this.numberOfdigits;
+    let num = this.numberOfdigits;
+
+    if (this.favoriteNumber === '' && num >= 1) {
+      num -= 1;
+    }
     const result = [];
-    for (let i = 1; i <= num - 1; i += 1) {
+    for (let i = 1; i <= num; i += 1) {
       result.push(Math.floor(Math.random() * 10));
     }
     return result.join('');
